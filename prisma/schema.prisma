@@ -1,0 +1,285 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model companies {
+  id                                String                   @id @db.VarChar(20)
+  service_plan_id                   BigInt                   @db.UnsignedBigInt
+  type                              companies_type?
+  name                              String                   @db.VarChar(255)
+  facility_type                     companies_facility_type?
+  post_code                         String                   @db.Char(10)
+  prefectures                       String                   @db.VarChar(50)
+  address                           String                   @db.VarChar(255)
+  phone_number                      String                   @db.VarChar(20)
+  url                               String?                  @db.VarChar(255)
+  remark                            String?                  @db.Text
+  created_by                        BigInt?                  @db.UnsignedBigInt
+  updated_by                        BigInt?                  @db.UnsignedBigInt
+  deleted_by                        BigInt?                  @db.UnsignedBigInt
+  created_at                        DateTime?                @default(now())
+  updated_at                        DateTime?                @updatedAt
+  status                            companies_status?
+  overview_service                  String?                  @db.Text
+  users_companies_created_byTousers users?                   @relation("companies_created_byTousers", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "companies_created_by_foreign")
+  users_companies_deleted_byTousers users?                   @relation("companies_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "companies_deleted_by_foreign")
+  service_plans                     service_plans            @relation(fields: [service_plan_id], references: [id], map: "companies_service_plan_id_foreign")
+  users_companies_updated_byTousers users?                   @relation("companies_updated_byTousers", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "companies_updated_by_foreign")
+  users_users_company_idTocompanies users[]                  @relation("users_company_idTocompanies")
+
+  @@index([created_by], map: "companies_created_by_foreign")
+  @@index([deleted_by], map: "companies_deleted_by_foreign")
+  @@index([service_plan_id], map: "companies_service_plan_id_foreign")
+  @@index([updated_by], map: "companies_updated_by_foreign")
+}
+
+model devices {
+  id                              BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  company_id                      String?             @db.VarChar(20)
+  device_type                     devices_device_type
+  SN                              String              @unique(map: "devices_sn_unique") @db.VarChar(50)
+  IP                              String?             @db.VarChar(50)
+  start_date                      DateTime?           @db.Date
+  end_date                        DateTime?           @db.Date
+  created_by                      BigInt?             @db.UnsignedBigInt
+  updated_by                      BigInt?             @db.UnsignedBigInt
+  deleted_by                      BigInt?             @db.UnsignedBigInt
+  created_at                      DateTime?           @db.Timestamp(0)
+  updated_at                      DateTime?           @db.Timestamp(0)
+  status                          devices_status?
+  nick_name                       String?             @db.VarChar(255)
+  address                         String?             @db.VarChar(255)
+  log_status                      devices_log_status  @default(dbgenerated("停止"))
+  active_logs                     active_logs[]
+  users_devices_created_byTousers users?              @relation("devices_created_byTousers", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "devices_created_by_foreign")
+  users_devices_deleted_byTousers users?              @relation("devices_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "devices_deleted_by_foreign")
+  users_devices_updated_byTousers users?              @relation("devices_updated_byTousers", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "devices_updated_by_foreign")
+
+  @@index([created_by], map: "devices_created_by_foreign")
+  @@index([deleted_by], map: "devices_deleted_by_foreign")
+  @@index([updated_by], map: "devices_updated_by_foreign")
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+model password_reset_tokens {
+  email      String    @id @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+}
+
+model permissions {
+  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  name             String             @db.VarChar(50)
+  action           String             @db.VarChar(50)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  role_permissions role_permissions[]
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  expires_at     DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model role_permissions {
+  id            BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  role_id       BigInt      @db.UnsignedBigInt
+  permission_id BigInt      @db.UnsignedBigInt
+  created_at    DateTime?   @db.Timestamp(0)
+  updated_at    DateTime?   @db.Timestamp(0)
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, map: "role_permissions_permission_id_foreign")
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, map: "role_permissions_role_id_foreign")
+
+  @@index([permission_id], map: "role_permissions_permission_id_foreign")
+  @@index([role_id], map: "role_permissions_role_id_foreign")
+}
+
+model roles {
+  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  name             String             @db.VarChar(50)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  role_permissions role_permissions[]
+  users            users[]
+}
+
+model service_plans {
+  id                                    BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  eng_name                              String               @db.VarChar(50)
+  japan_name                            String               @db.VarChar(50)
+  overview                              String               @db.Text
+  explanation                           String?              @db.Text
+  device_used                           String?              @db.VarChar(255)
+  fee                                   Int
+  period                                service_plans_period
+  created_by                            BigInt?              @db.UnsignedBigInt
+  updated_by                            BigInt?              @db.UnsignedBigInt
+  deleted_by                            BigInt?              @db.UnsignedBigInt
+  created_at                            DateTime?            @db.Timestamp(0)
+  updated_at                            DateTime?            @db.Timestamp(0)
+  companies                             companies[]
+  users_service_plans_created_byTousers users?               @relation("service_plans_created_byTousers", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "service_plans_created_by_foreign")
+  users_service_plans_deleted_byTousers users?               @relation("service_plans_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "service_plans_deleted_by_foreign")
+  users_service_plans_updated_byTousers users?               @relation("service_plans_updated_byTousers", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "service_plans_updated_by_foreign")
+
+  @@index([created_by], map: "service_plans_created_by_foreign")
+  @@index([deleted_by], map: "service_plans_deleted_by_foreign")
+  @@index([updated_by], map: "service_plans_updated_by_foreign")
+}
+
+model staff_schedules {
+  id                                      BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  staff_id                                BigInt    @db.UnsignedBigInt
+  day_of_week                             String?   @db.VarChar(50)
+  start_working_time                      DateTime? @db.Time(0)
+  end_working_time                        DateTime? @db.Time(0)
+  created_by                              BigInt?   @db.UnsignedBigInt
+  updated_by                              BigInt?   @db.UnsignedBigInt
+  deleted_by                              BigInt?   @db.UnsignedBigInt
+  created_at                              DateTime? @db.Timestamp(0)
+  updated_at                              DateTime? @db.Timestamp(0)
+  users_staff_schedules_created_byTousers users?    @relation("staff_schedules_created_byTousers", fields: [created_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "staff_schedules_created_by_foreign")
+  users_staff_schedules_deleted_byTousers users?    @relation("staff_schedules_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "staff_schedules_deleted_by_foreign")
+  users_staff_schedules_staff_idTousers   users     @relation("staff_schedules_staff_idTousers", fields: [staff_id], references: [id], onDelete: Cascade, map: "staff_schedules_staff_id_foreign")
+  users_staff_schedules_updated_byTousers users?    @relation("staff_schedules_updated_byTousers", fields: [updated_by], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "staff_schedules_updated_by_foreign")
+
+  @@index([created_by], map: "staff_schedules_created_by_foreign")
+  @@index([deleted_by], map: "staff_schedules_deleted_by_foreign")
+  @@index([staff_id], map: "staff_schedules_staff_id_foreign")
+  @@index([updated_by], map: "staff_schedules_updated_by_foreign")
+}
+
+model users {
+  id                                                BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  name                                              String            @db.VarChar(255)
+  email                                             String            @unique(map: "users_email_unique") @db.VarChar(255)
+  password                                          String?           @db.VarChar(255)
+  name_katakana                                     String            @db.VarChar(50)
+  primary_phone_number                              String            @db.VarChar(20)
+  secondary_phone_number                            String?           @db.VarChar(20)
+  line_number                                       String?           @db.VarChar(50)
+  email_verified_at                                 DateTime?         @db.Timestamp(0)
+  remember_token                                    String?           @db.VarChar(100)
+  created_at                                        DateTime?         @db.Timestamp(0)
+  updated_at                                        DateTime?         @updatedAt @db.Timestamp(0)
+  role_id                                           BigInt?           @db.UnsignedBigInt
+  company_id                                        String?           @db.VarChar(20)
+  companies_companies_created_byTousers             companies[]       @relation("companies_created_byTousers")
+  companies_companies_deleted_byTousers             companies[]       @relation("companies_deleted_byTousers")
+  companies_companies_updated_byTousers             companies[]       @relation("companies_updated_byTousers")
+  devices_devices_created_byTousers                 devices[]         @relation("devices_created_byTousers")
+  devices_devices_deleted_byTousers                 devices[]         @relation("devices_deleted_byTousers")
+  devices_devices_updated_byTousers                 devices[]         @relation("devices_updated_byTousers")
+  service_plans_service_plans_created_byTousers     service_plans[]   @relation("service_plans_created_byTousers")
+  service_plans_service_plans_deleted_byTousers     service_plans[]   @relation("service_plans_deleted_byTousers")
+  service_plans_service_plans_updated_byTousers     service_plans[]   @relation("service_plans_updated_byTousers")
+  staff_schedules_staff_schedules_created_byTousers staff_schedules[] @relation("staff_schedules_created_byTousers")
+  staff_schedules_staff_schedules_deleted_byTousers staff_schedules[] @relation("staff_schedules_deleted_byTousers")
+  staff_schedules_staff_schedules_staff_idTousers   staff_schedules[] @relation("staff_schedules_staff_idTousers")
+  staff_schedules_staff_schedules_updated_byTousers staff_schedules[] @relation("staff_schedules_updated_byTousers")
+  companies_users_company_idTocompanies             companies?        @relation("users_company_idTocompanies", fields: [company_id], references: [id], onDelete: Cascade, map: "users_company_id_foreign")
+  roles                                             roles?            @relation(fields: [role_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "users_role_id_foreign")
+
+  @@index([company_id], map: "users_company_id_foreign")
+  @@index([role_id], map: "users_role_id_foreign")
+}
+
+model active_logs {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  device_id  BigInt    @db.UnsignedBigInt
+  data_log   String?   @db.LongText
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+  devices    devices   @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "active_logs_device_id_foreign")
+
+  @@index([device_id], map: "active_logs_device_id_foreign")
+}
+
+model jobs {
+  id           BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  queue        String @db.VarChar(255)
+  payload      String @db.LongText
+  attempts     Int    @db.UnsignedTinyInt
+  reserved_at  Int?   @db.UnsignedInt
+  available_at Int    @db.UnsignedInt
+  created_at   Int    @db.UnsignedInt
+
+  @@index([queue], map: "jobs_queue_index")
+}
+
+enum devices_device_type {
+  SmartCare____    @map("SmartCareセンサー")
+  GPSTracker
+  Video_Conference @map("Video Conference")
+}
+enum companies_type {
+  // 法人 @map("法人")
+  // "個人" @map("個人")
+  Other
+}
+
+enum companies_facility_type {
+  hung @map("介護施設")
+  // システム運用企業 @map("システム運用企業")
+  // 病院施設 @map("病院施設")
+  // 学校施設 @map("学校施設")
+  // 事務所 @map("事務所")
+  // 個人 @map("個人")
+  // その他 @map("その他")
+}
+
+enum service_plans_device_used {
+  DEVICE_A @map("DEVICE A")
+  DEVICE_B @map("DEVICE B")
+  DEVICE_C @map("DEVICE C")
+}
+
+enum service_plans_period {
+  six_month @map("6か月")
+  // 1年 @map("1年")
+}
+
+enum companies_status {
+  nam @map("申込中")
+
+}
+
+enum devices_status {
+  name @map("稼働中")
+  // 停止中 @map("停止中")
+}
+
+enum devices_log_status {
+  hung @map("稼働開始")
+  // 停止 @map("停止")
+}
