@@ -6,7 +6,7 @@ import { PayloadDTO } from './dto/create_payload.dto';
 
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) {}
+  constructor(private readonly companiesService: CompaniesService) { }
 
   @Post()
   create(@Body() PayloadDTO: PayloadDTO) {
@@ -33,5 +33,5 @@ export class CompaniesController {
     return this.companiesService.remove(+id);
   }
 
- 
+
 }
