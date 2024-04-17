@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 export class CompaniesService {
 	async create(PayloadDTO: PayloadDTO) {
 		return prisma.$transaction(async (tx) => {
-			const firstCompany = await tx.companies.findFirst({
+			const lastCompany = await tx.companies.findFirst({
 				select: {
 					id: true
 				},
@@ -17,19 +17,19 @@ export class CompaniesService {
 					created_at: 'desc'
 				},
 			})
+			
 			let order = 1;
-			if (firstCompany) {
-				order = parseInt(firstCompany.id.split('-').pop())
+			if (lastCompany) {
+				order = parseInt(lastCompany.id.split('-').pop()) + 1
 			}
 			const id = this.generateUniqueUserId(order);
-
+			console.log(id);
 			return await tx.companies.create({
 				select: {
 					id: true,
 					name: true,
 					users_users_company_idTocompanies: {
 						select: {
-							id: true,
 							name: true
 						}
 					}
@@ -44,21 +44,20 @@ export class CompaniesService {
 					service_plan_id: PayloadDTO.company.service_plan_id,
 					url: PayloadDTO.company.url,
 					remark: PayloadDTO.company.remark,
-					users_users_company_idTocompanies: {
+					users_users_company_idTocompanies :{
 						create: {
-							id: PayloadDTO.client.id,
 							email: PayloadDTO.client.email,
 							name: PayloadDTO.client.name,
 							password: PayloadDTO.client.password,
 							primary_phone_number: PayloadDTO.client.primary_phone_number,
 							secondary_phone_number: PayloadDTO.client.secondary_phone_number,
-							name_katakana: PayloadDTO.client.name_furigana
+							name_katakana: PayloadDTO.client.name_furigana,
 						}
-					},
+					}
 				}
 			})
-
 		})
+		
 	}
 
 	findAll() {
@@ -78,8 +77,16 @@ export class CompaniesService {
 	}
 
 	generateUniqueUserId(order:number): string {
+		let numberToString = order.toString();
+		if (numberToString.length == 2) {
+			numberToString = '0' + numberToString
+		}
+		else if(numberToString.length == 1){
+			numberToString = '00' +numberToString
+		}
 		let now = dayjs();
 		const formattedDate = now.format('YYYYMMDD');
-		return formattedDate + '-' + order
+
+		return formattedDate + '-' + numberToString
 	}
 }

@@ -210,6 +210,7 @@ model users {
   companies_users_company_idTocompanies             companies?        @relation("users_company_idTocompanies", fields: [company_id], references: [id], onDelete: Cascade, map: "users_company_id_foreign")
   roles                                             roles?            @relation(fields: [role_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "users_role_id_foreign")
 
+  @@unique([email])
   @@index([company_id], map: "users_company_id_foreign")
   @@index([role_id], map: "users_role_id_foreign")
 }
