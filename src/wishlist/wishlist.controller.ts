@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Res } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
-
+import { Response } from 'express';
 @Controller('wishlist')
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
@@ -13,14 +13,14 @@ export class WishlistController {
   }
 
   @Get()
-  @Render('index.hbs')
-  findAll() {
-    return { message: 'Hello world!' };
+  findAll(@Res() res:Response) {
+    return res.render('wishlist.hbs');
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistService.findOne(+id);
+  findOne(@Param('id') id: string,@Res() res:Response) {
+    return res.render('job-detail')
+    // return this.wishlistService.findOne(+id);
   }
 
   @Patch(':id')
