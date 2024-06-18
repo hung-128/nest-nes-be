@@ -1,0 +1,67 @@
+[
+    {
+        "TableName": "Student",
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "Name",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "MaSV",
+                "AttributeType": "S"
+            }
+        ],
+        "KeySchema": [
+            {
+                "AttributeName": "MaSV",
+                "KeyType": "HASH"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    {
+        "TableName": "Information",
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "id",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "Address",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "PhoneNumber",
+                "AttributeType": "S"
+            }
+        ],
+        "KeySchema": [
+            {
+                "AttributeName": "id",
+                "KeyType": "HASH"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    },
+    {
+        "TableName": "Class",
+        "AttributeDefinitions": [
+          { "AttributeName": "RoomNumber", "AttributeType": "S" },
+          { "AttributeName": "ClassName", "AttributeType": "S" },
+          { "AttributeName": "Seats", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "RoomNumber", "KeyType": "HASH" }      
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        }
+    }
+]

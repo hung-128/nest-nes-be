@@ -3,7 +3,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'express-handlebars';
-
+import * as session from 'express-session';
+import * as passport from 'passport';
 
 
 async function bootstrap() {
@@ -23,6 +24,17 @@ async function bootstrap() {
     }),
   );
   app.setViewEngine('hbs');
+
+  // initialize session
+  app.use(
+    session({
+      secret: 'your-secret-key',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
 
 
   await app.listen(3001);
