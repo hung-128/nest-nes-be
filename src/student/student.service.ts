@@ -1,7 +1,6 @@
 import { Injectable , Inject} from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PutCommandInput } from '@aws-sdk/lib-dynamodb';
 
@@ -9,7 +8,7 @@ import { PutCommandInput } from '@aws-sdk/lib-dynamodb';
 @Injectable()
 export class StudentService {
   constructor(
-    @Inject('AWS_DYNAMODB') private readonly dynamoDBClient: DocumentClient,
+    @Inject('DYNAMODB') private readonly dynamoDbClient: DocumentClient,
   ) {}
   
   async create(createStudentDto: CreateStudentDto): Promise<void> {
@@ -22,7 +21,7 @@ export class StudentService {
           last_name: createStudentDto.last_name
         }
       }
-      await this.dynamoDBClient.put(putStudentParams).promise();
+      await this.dynamoDbClient.put(putStudentParams).promise();
     } catch (error) {
       console.error('Error putting item into DynamoDB:', error);
       throw error;
