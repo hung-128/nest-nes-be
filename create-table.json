@@ -3,14 +3,22 @@
         "TableName": "Student",
         "AttributeDefinitions": [
             {
-                "AttributeName": "MaSV",
+                "AttributeName": "class_name",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "student_id",
                 "AttributeType": "S"
             }
         ],
         "KeySchema": [
             {
-                "AttributeName": "MaSV",
+                "AttributeName": "class_name",
                 "KeyType": "HASH"
+            },
+            {
+                "AttributeName": "student_id",
+                "KeyType": "RANGE"
             }
         ],
         "ProvisionedThroughput": {
@@ -40,10 +48,10 @@
     {
         "TableName": "Class",
         "AttributeDefinitions": [
-          { "AttributeName": "RoomNumber", "AttributeType": "S" }
+          { "AttributeName": "class_name", "AttributeType": "S" }
         ],
         "KeySchema": [
-          { "AttributeName": "RoomNumber", "KeyType": "HASH" }      
+          { "AttributeName": "class_name", "KeyType": "HASH" }      
         ],
         "ProvisionedThroughput": {
           "ReadCapacityUnits": 5,
