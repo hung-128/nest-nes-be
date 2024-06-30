@@ -6,11 +6,10 @@ import { UsersModule } from './users/users.module';
 import { GoogleStrategy } from './google.strategy';
 import { AuthModule } from './auth/auth.module';
 import { TodoModule } from './todo/todo.module';
-import { MongooseModule } from '@nestjs/mongoose';
 // import { ModelModule } from './model/model.module';
 
 @Module({
-  imports: [WishlistModule, UsersModule, AuthModule, TodoModule, MongooseModule.forRoot('mongodb://127.0.0.1:27017/nest') ],
+  imports: [WishlistModule, UsersModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
 })
