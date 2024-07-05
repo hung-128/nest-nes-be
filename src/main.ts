@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 import * as hbs from 'express-handlebars';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import * as bodyParser from 'body-parser';
+
 
 
 async function bootstrap() {
@@ -36,6 +38,9 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
+   // Add body-parser middleware
+   app.use(bodyParser.json());
+   app.use(bodyParser.urlencoded({ extended: true }));
 
   await app.listen(3001);
 }

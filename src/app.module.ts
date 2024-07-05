@@ -7,9 +7,15 @@ import { GoogleStrategy } from './google.strategy';
 import { AuthModule } from './auth/auth.module';
 import { TodoModule } from './todo/todo.module';
 // import { ModelModule } from './model/model.module';
+import { QaModule } from './qa/qa.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [WishlistModule, UsersModule, AuthModule],
+  imports: [WishlistModule, UsersModule, AuthModule, QaModule, 
+    MulterModule.register({
+      dest: './uploads', // Thư mục lưu trữ file upload
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
 })

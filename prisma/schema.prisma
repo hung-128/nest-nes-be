@@ -14,6 +14,7 @@ model Role {
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @updatedAt @db.Timestamp(0)
   users      User[]
+
   @@map("roles")
 }
 
@@ -23,8 +24,8 @@ model User {
   email             String         @unique(map: "users_email_unique") @db.VarChar(255)
   password          String?        @db.VarChar(255)
   email_verified_at DateTime?      @db.Timestamp(0)
-  role_id           Int            
-  type              Int            
+  role_id           Int
+  type              Int
   role              Role?          @relation(fields: [role_id], references: [id])
   created_at        DateTime?      @db.Timestamp(0)
   updated_at        DateTime?      @updatedAt @db.Timestamp(0)
@@ -72,6 +73,31 @@ model Image {
   updated_at   DateTime?     @updatedAt @db.Timestamp(0)
 
   @@map("images")
+}
+
+model Question {
+  id         Int       @id @default(autoincrement())
+  subject    String    @db.VarChar(255)
+  question   String
+  img        String
+  answer     Answer?
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
+
+  @@map("questions")
+}
+
+model Answer {
+  id          Int       @id @default(autoincrement())
+  question_id Int       @unique
+  question    Question  @relation(fields: [question_id], references: [id])
+  subject     String    @db.VarChar(255)
+  answer      String
+  img         String
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @updatedAt @db.Timestamp(0)
+
+  @@map("answers")
 }
 
 enum ImageType {
